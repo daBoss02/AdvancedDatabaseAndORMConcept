@@ -1,4 +1,9 @@
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using AdvancedDatabaseAndORMConcept.Data;
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddDbContext<AdvancedDatabaseAndORMConceptContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("AdvancedDatabaseAndORMConceptContext") ?? throw new InvalidOperationException("Connection string 'AdvancedDatabaseAndORMConceptContext' not found.")));
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();

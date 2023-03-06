@@ -9,5 +9,6 @@
         public string StateProvince { get; set; }
         public string CountryRegion { get; set; }
         public HashSet<Customer> Customers { get; set; } = new HashSet<Customer>();
+        public Address() { }
     }
 }
