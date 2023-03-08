@@ -1,0 +1,22 @@
+﻿@model AdvancedDatabaseAndORMConcept.Models.ViewModels.CustomerAddressVM;
+
+<form asp-action="LivesThere" method="post">
+    <select asp-for="CustomerId" asp-items="@Model.Customers"></select>
+    <select asp-for="AddressId" asp-items="@Model.Addresses"></select>
+    <input type="submit" value="Submit" />
+</form>
+
+@if (Model.Address != null && Model.Customer != null) 
+{
+    if (Model.Customer.Address.Id == Model.Address.Id)
+    {
+        <div>
+            @Model.Customer.FirstName @Model.Customer.LastName lives at @Model.Address.AddressLine1
+        </div>
+    } else
+    {
+        <div>
+            @Model.Customer.FirstName @Model.Customer.LastName does not live at @Model.Address.AddressLine1
+        </div>
+    }
+}

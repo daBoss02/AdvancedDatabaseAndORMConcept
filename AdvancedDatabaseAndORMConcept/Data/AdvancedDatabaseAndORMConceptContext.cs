@@ -14,7 +14,7 @@ namespace AdvancedDatabaseAndORMConcept.Data
         {
         }
 
-        public DbSet<Customer> Customer { get; set; } = default!;
+        public DbSet<Customer> Customers { get; set; } = default!;
         public DbSet<Address> Addresses { get; set; } = default!;
     }
 }

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using AdvancedDatabaseAndORMConcept.Data;
 using AdvancedDatabaseAndORMConcept.Models;
+using AdvancedDatabaseAndORMConcept.Models.ViewModels;
 
 namespace AdvancedDatabaseAndORMConcept.Controllers
 {
@@ -22,18 +23,18 @@ namespace AdvancedDatabaseAndORMConcept.Controllers
         // GET: Customers
         public async Task<IActionResult> Index()
         {
-              return View(await _context.Customer.ToListAsync());
+              return View(await _context.Customers.ToListAsync());
         }
 
         // GET: Customers/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null || _context.Customer == null)
+            if (id == null || _context.Customers == null)
             {
                 return NotFound();
             }
 
-            var customer = await _context.Customer
+            var customer = await _context.Customers
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (customer == null)
             {
@@ -68,12 +69,12 @@ namespace AdvancedDatabaseAndORMConcept.Controllers
         // GET: Customers/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null || _context.Customer == null)
+            if (id == null || _context.Customers == null)
             {
                 return NotFound();
             }
 
-            var customer = await _context.Customer.FindAsync(id);
+            var customer = await _context.Customers.FindAsync(id);
             if (customer == null)
             {
                 return NotFound();
@@ -119,12 +120,12 @@ namespace AdvancedDatabaseAndORMConcept.Controllers
         // GET: Customers/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null || _context.Customer == null)
+            if (id == null || _context.Customers == null)
             {
                 return NotFound();
             }
 
-            var customer = await _context.Customer
+            var customer = await _context.Customers
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (customer == null)
             {
@@ -139,14 +140,14 @@ namespace AdvancedDatabaseAndORMConcept.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (_context.Customer == null)
+            if (_context.Customers == null)
             {
                 return Problem("Entity set 'AdvancedDatabaseAndORMConceptContext.Customer'  is null.");
             }
-            var customer = await _context.Customer.FindAsync(id);
+            var customer = await _context.Customers.FindAsync(id);
             if (customer != null)
             {
-                _context.Customer.Remove(customer);
+                _context.Customers.Remove(customer);
             }
             
             await _context.SaveChangesAsync();
@@ -155,7 +156,28 @@ namespace AdvancedDatabaseAndORMConcept.Controllers
 
         private bool CustomerExists(int id)
         {
-          return _context.Customer.Any(e => e.Id == id);
+          return _context.Customers.Any(e => e.Id == id);
+        }
+
+        public async Task<IActionResult> LivesThere(int CustomerId, int AddressId)
+        {
+            List<Address> addresses = await _context.Addresses.ToListAsync();
+            List<Customer> customers = await _context.Customers.ToListAsync();
+            try
+            {
+                CustomerAddressVM vm = new CustomerAddressVM(addresses, customers, CustomerId, AddressId);
+                return View(vm);
+            } catch
+            {
+                CustomerAddressVM vm = new CustomerAddressVM(addresses, customers);
+                return View(vm);
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> LivesThere([Bind ("CustomerId", "AddressId")] CustomerAddressVM vm)
+        {
+            return RedirectToAction("LivesThere", new { CustomerId = vm.CustomerId, AddressId = vm.AddressId });
         }
     }
 }

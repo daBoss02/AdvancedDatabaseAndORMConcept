@@ -3,6 +3,7 @@ using AdvancedDatabaseAndORMConcept.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AdvancedDatabaseAndORMConcept.Migrations
 {
     [DbContext(typeof(AdvancedDatabaseAndORMConceptContext))]
-    partial class AdvancedDatabaseAndORMConceptContextModelSnapshot : ModelSnapshot
+    [Migration("20230308202522_update")]
+    partial class update
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -20,6 +23,21 @@ namespace AdvancedDatabaseAndORMConcept.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("AddressCustomer", b =>
+                {
+                    b.Property<int>("AddressesId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CustomersId")
+                        .HasColumnType("int");
+
+                    b.HasKey("AddressesId", "CustomersId");
+
+                    b.HasIndex("CustomersId");
+
+                    b.ToTable("AddressCustomer");
+                });
 
             modelBuilder.Entity("AdvancedDatabaseAndORMConcept.Models.Address", b =>
                 {
@@ -61,9 +79,6 @@ namespace AdvancedDatabaseAndORMConcept.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("AddressId")
-                        .HasColumnType("int");
-
                     b.Property<string>("CompanyName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -82,25 +97,22 @@ namespace AdvancedDatabaseAndORMConcept.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AddressId");
-
                     b.ToTable("Customers");
                 });
 
-            modelBuilder.Entity("AdvancedDatabaseAndORMConcept.Models.Customer", b =>
+            modelBuilder.Entity("AddressCustomer", b =>
                 {
-                    b.HasOne("AdvancedDatabaseAndORMConcept.Models.Address", "Address")
-                        .WithMany("Customers")
-                        .HasForeignKey("AddressId")
+                    b.HasOne("AdvancedDatabaseAndORMConcept.Models.Address", null)
+                        .WithMany()
+                        .HasForeignKey("AddressesId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Address");
-                });
-
-            modelBuilder.Entity("AdvancedDatabaseAndORMConcept.Models.Address", b =>
-                {
-                    b.Navigation("Customers");
+                    b.HasOne("AdvancedDatabaseAndORMConcept.Models.Customer", null)
+                        .WithMany()
+                        .HasForeignKey("CustomersId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }
